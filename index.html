@@ -5,111 +5,91 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MÉTRO - Grossiste RP</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #121212; color: white; text-align: center; margin: 0; padding-bottom: 50px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #121212; color: white; text-align: center; margin: 0; padding-bottom: 120px; }
         .hidden { display: none !important; }
-        
-        /* Accueil */
         #welcome-screen { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: radial-gradient(circle, #1e3a8a 0%, #121212 100%); }
-        .logo { width: 250px; border-radius: 15px; box-shadow: 0 0 30px rgba(241, 196, 15, 0.4); border: 3px solid #f1c40f; }
-        .btn-enter { margin-top: 40px; padding: 18px 50px; font-size: 1.4rem; background: #f1c40f; color: #000; border: none; cursor: pointer; border-radius: 50px; font-weight: bold; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .btn-enter:hover { transform: scale(1.05); background: #f39c12; }
-
-        /* Boutique */
-        .container { padding: 20px; }
-        h2 { color: #f1c40f; text-transform: uppercase; letter-spacing: 2px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; padding: 15px; max-width: 1000px; margin: auto; }
-        .card { background: #1e1e1e; padding: 15px; border-radius: 12px; border: 1px solid #333; transition: 0.2s; }
-        .card:hover { border-color: #f1c40f; }
-        .card h4 { margin: 10px 0; font-size: 0.9rem; height: 35px; overflow: hidden; }
-        .price { color: #2ecc71; font-weight: bold; font-size: 1.1rem; display: block; margin-bottom: 10px; }
-        input[type="number"] { width: 60px; padding: 8px; border-radius: 5px; border: none; text-align: center; font-weight: bold; }
-
-        /* Panier Fixe */
-        #cart-summary { background: #1a1a1a; padding: 20px; position: fixed; bottom: 0; width: 100%; border-top: 4px solid #f1c40f; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); box-sizing: border-box; }
-        .total-text { font-size: 1.2rem; margin: 5px 0; }
-        .comm-text { color: #f1c40f; font-size: 1rem; margin-bottom: 10px; opacity: 0.9; }
-        .btn-order { background: #27ae60; color: white; padding: 12px 40px; border: none; border-radius: 8px; cursor: pointer; font-size: 1.1rem; font-weight: bold; }
+        .logo { width: 220px; border-radius: 15px; border: 3px solid #f1c40f; box-shadow: 0 0 20px rgba(241, 196, 15, 0.3); }
+        .btn-enter { margin-top: 30px; padding: 15px 40px; font-size: 1.2rem; background: #f1c40f; color: #000; border: none; cursor: pointer; border-radius: 50px; font-weight: bold; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; padding: 15px; }
+        .card { background: #1e1e1e; padding: 10px; border-radius: 10px; border: 1px solid #333; }
+        .price { color: #2ecc71; font-weight: bold; display: block; margin: 5px 0; }
+        input[type="number"] { width: 50px; padding: 5px; border-radius: 5px; text-align: center; }
+        #cart-summary { background: #1a1a1a; padding: 15px; position: fixed; bottom: 0; width: 100%; border-top: 4px solid #f1c40f; box-sizing: border-box; }
+        .btn-order { background: #27ae60; color: white; padding: 10px 30px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; }
     </style>
 </head>
 <body>
 
     <div id="welcome-screen">
-        <img src="https://i.ibb.co/XfXfGZp/7677.jpg" alt="Logo Métro" class="logo">
-        <h1>BIENVENUE CHEZ LE MÉTRO</h1>
-        <p>Fournisseur alimentaire pour professionnels</p>
-        <button class="btn-enter" onclick="showShop()">ENTRER DANS LE MAGASIN</button>
+        <img src="https://i.ibb.co/XfXfGZp/7677.jpg" class="logo">
+        <h1>BIENVENUE AU MÉTRO</h1>
+        <button class="btn-enter" onclick="showShop()">COMMANDER</button>
     </div>
 
     <div id="shop-screen" class="hidden">
-        <div class="container">
-            <h2>Catalogue Produits</h2>
-            <div class="grid" id="product-list"></div>
-        </div>
-
+        <h2 style="color:#f1c40f">Catalogue Métro</h2>
+        <div class="grid" id="product-list"></div>
         <div id="cart-summary">
-            <div class="total-text">TOTAL COMMANDE : <span id="total-price" style="color:#2ecc71; font-weight:bold;">0</span> €</div>
-            <div class="comm-text">Commission (30%) : <span id="commission-price">0</span> €</div>
-            <button class="btn-order" onclick="finalizeOrder()">FINALISER LA COMMANDE</button>
+            <div>TOTAL : <span id="total-price" style="color:#2ecc71">0</span> €</div>
+            <div style="font-size:0.9rem; color:#f1c40f">Com Vendeur (30%) : <span id="commission-price">0</span> €</div>
+            <button class="btn-order" onclick="finalizeOrder()">FINALISER ET ENVOYER</button>
         </div>
     </div>
 
     <script>
-        // Ta liste de prix exacte
+        const webhookURL = "MET_TON_URL_WEBHOOK_ICI"; // <--- COLLER L'URL DU WEBHOOK ICI
+
         const products = [
             { name: "Pomme", price: 2 }, { name: "Poire", price: 3 },
-            { name: "Barquette de frites", price: 10 }, { name: "Raisin", price: 5 },
+            { name: "Frites", price: 10 }, { name: "Raisin", price: 5 },
             { name: "Sel", price: 3 }, { name: "Sucre", price: 4 },
             { name: "Steak", price: 5 }, { name: "Cookie", price: 2.5 },
             { name: "Nuggets", price: 8 }, { name: "Chips", price: 5 },
             { name: "Fromage", price: 4 }, { name: "Saucisson", price: 4 },
-            { name: "Farine", price: 5 }, { name: "Levure chimique", price: 4.5 },
-            { name: "Lait", price: 3 }, { name: "Tomate", price: 2 },
-            { name: "Oeufs", price: 2 }, { name: "Chocolat", price: 4 },
-            { name: "Beurre", price: 4 }, { name: "Salade", price: 2 },
-            { name: "Pain burger", price: 3 }, { name: "Fraise", price: 4 },
-            { name: "Moutarde", price: 3 }, { name: "Cornichon", price: 2 },
-            { name: "Soda", price: 10 }, { name: "Pack soda", price: 190 },
-            { name: "Eau", price: 30 }, { name: "Pack eau", price: 100 },
-            { name: "Carton pizza", price: 9 }, { name: "Gobelet", price: 10 },
-            { name: "Emballage", price: 8 }, { name: "Carton", price: 8 }
+            { name: "Lait", price: 3 }, { name: "Soda", price: 10 },
+            { name: "Pack soda", price: 190 }, { name: "Eau", price: 30 },
+            { name: "Pack eau", price: 100 }, { name: "Pain", price: 7.5 }
         ];
 
         function showShop() {
-            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('welcome-screen').style.display = 'none';
             document.getElementById('shop-screen').classList.remove('hidden');
-            renderProducts();
-        }
-
-        function renderProducts() {
             const list = document.getElementById('product-list');
-            list.innerHTML = "";
-            products.forEach((p, index) => {
-                list.innerHTML += `
-                    <div class="card">
-                        <h4>${p.name}</h4>
-                        <span class="price">${p.price} €</span>
-                        <input type="number" min="0" value="0" oninput="updateTotal()" id="qty-${index}">
-                    </div>
-                `;
+            products.forEach((p, i) => {
+                list.innerHTML += `<div class="card"><h4>${p.name}</h4><span class="price">${p.price}€</span><input type="number" min="0" value="0" oninput="updateTotal()" id="qty-${i}"></div>`;
             });
         }
 
         function updateTotal() {
             let total = 0;
-            products.forEach((p, index) => {
-                const qty = document.getElementById(`qty-${index}`).value || 0;
-                total += p.price * parseFloat(qty);
+            products.forEach((p, i) => {
+                total += p.price * (document.getElementById(`qty-${i}`).value || 0);
             });
             document.getElementById('total-price').innerText = total.toFixed(2);
             document.getElementById('commission-price').innerText = (total * 0.3).toFixed(2);
         }
 
-        function finalizeOrder() {
+        async function finalizeOrder() {
             const total = document.getElementById('total-price').innerText;
-            if(total == "0.00") return alert("Votre panier est vide !");
+            const comm = document.getElementById('commission-price').innerText;
+            if(total == "0.00") return alert("Panier vide");
+
+            const message = {
+                embeds: [{
+                    title: "🛒 Nouvelle Commande MÉTRO",
+                    color: 15844367,
+                    fields: [
+                        { name: "Total Client", value: total + " €", inline: true },
+                        { name: "Com Vendeur (30%)", value: comm + " €", inline: true }
+                    ],
+                    footer: { text: "Métro RP - Système de commande automatique" }
+                }]
+            };
+
+            await fetch(webhookURL, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(message) });
             
-            alert("✅ Commande enregistrée !\nTotal : " + total + "€\n\nRedirection vers Discord...");
-            window.location.href = "TON_LIEN_DISCORD_ICI";
+            alert("✅ Commande envoyée au Discord !");
+            window.location.href = "https://discord.gg/7h5HV5N3";
         }
     </script>
 </body>
