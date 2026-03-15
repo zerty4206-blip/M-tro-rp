@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>MÉTRO - Fournisseur Officiel RP</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; background-color: #1a1a1a; color: white; text-align: center; margin: 0; }
+        .hidden { display: none; }
+        
+        /* Accueil */
+        #welcome-screen { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .logo { width: 300px; border-radius: 20px; box-shadow: 0 0 20px rgba(255,255,0,0.5); }
+        .btn-enter { margin-top: 30px; padding: 15px 40px; font-size: 1.5rem; background: #f1c40f; border: none; cursor: pointer; border-radius: 50px; font-weight: bold; }
+
+        /* Magasin */
+        .container { padding: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; padding: 20px; }
+        .card { background: #2c3e50; padding: 15px; border-radius: 10px; border: 1px solid #f1c40f; }
+        .price { color: #f1c40f; font-weight: bold; font-size: 1.2rem; }
+        input[type="number"] { width: 50px; padding: 5px; margin-top: 10px; border-radius: 5px; }
+
+        /* Panier */
+        #cart-summary { background: #34495e; padding: 20px; position: sticky; bottom: 0; border-top: 3px solid #f1c40f; }
+        .btn-order { background: #27ae60; color: white; padding: 10px 30px; border: none; border-radius: 5px; cursor: pointer; font-size: 1.2rem; }
+    </style>
+</head>
+<body>
+
+    <div id="welcome-screen">
+        <img src="https://via.placeholder.com/300x300?text=LOGO+METRO" alt="Logo Métro" class="logo"> <h1>Bienvenue chez MÉTRO</h1>
+        <p>Votre grossiste alimentaire de confiance</p>
+        <button class="btn-enter" onclick="showShop()">COMMANDER</button>
+    </div>
+
+    <div id="shop-screen" class="hidden">
+        <h2>Catalogue des Produits</h2>
+        <div class="grid" id="product-list">
+            </div>
+
+        <div id="cart-summary">
+            <h3>Total Commande : <span id="total-price">0</span> €</h3>
+            <p>Commission Vendeur (30%) : <span id="commission-price">0</span> €</p>
+            <button class="btn-order" onclick="finalizeOrder()">FINALISER LA COMMANDE</button>
+        </div>
+    </div>
+
+    <script>
+        const products = [
+            { name: "Pomme", price: 2 }, { name: "Poire", price: 3 },
+            { name: "Barquette de frites", price: 10 }, { name: "Raisin", price: 5 },
+            { name: "Sel", price: 3 }, { name: "Sucre", price: 4 },
+            { name: "Steak", price: 5 }, { name: "Cookie", price: 2.5 },
+            { name: "Nuggets", price: 8 }, { name: "Chips", price: 5 },
+            { name: "Lait", price: 3 }, { name: "Soda", price: 10 },
+            { name: "Pack Soda", price: 190 }, { name: "Eau", price: 30 },
+            { name: "Pack Eau", price: 100 }, { name: "Pain", price: 7.5 }
+        ];
+
+        function showShop() {
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('shop-screen').classList.remove('hidden');
+            renderProducts();
+        }
+
+        function renderProducts() {
+            const list = document.getElementById('product-list');
+            products.forEach((p, index) => {
+                list.innerHTML += `
+                    <div class="card">
+                        <h4>${p.name}</h4>
+                        <p class="price">${p.price}€</p>
+                        <input type="number" min="0" value="0" onchange="updateTotal()" id="qty-${index}">
+                    </div>
+                `;
+            });
+        }
+
+        function updateTotal() {
+            let total = 0;
+            products.forEach((p, index) => {
+                const qty = document.getElementById(`qty-${index}`).value;
+                total += p.price * qty;
+            });
+            document.getElementById('total-price').innerText = total.toFixed(2);
+            document.getElementById('commission-price').innerText = (total * 0.3).toFixed(2);
+        }
+
+        function finalizeOrder() {
+            const total = document.getElementById('total-price').innerText;
+            const comm = document.getElementById('commission-price').innerText;
+            alert("Commande envoyée au gérant !\nTotal : " + total + "€\nCom vendeur : " + comm + "€");
+            // Note : Pour Discord, il faut utiliser un Webhook, je peux t'expliquer comment.
+            window.location.href = "Lien_De_Ton_Discord_Ici";
+        }
+    </script>
+</body>
+</html>
